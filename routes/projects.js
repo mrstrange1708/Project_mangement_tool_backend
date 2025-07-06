@@ -5,12 +5,10 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-// Apply auth middleware to all routes
+
 router.use(auth);
 
-// @route   GET /api/projects
-// @desc    Get all projects for the authenticated user with filtering, pagination, and date range
-// @access  Private
+
 router.get('/', [
   query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
@@ -23,7 +21,7 @@ router.get('/', [
   query('sortOrder').optional().isIn(['asc', 'desc']).withMessage('Sort order must be asc or desc')
 ], async (req, res) => {
   try {
-    // Check for validation errors
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -45,20 +43,18 @@ router.get('/', [
       sortOrder = 'desc'
     } = req.query;
 
-    // Build filter object
     const filter = { user: req.user._id };
 
     if (status) filter.status = status;
     if (priority) filter.priority = priority;
 
-    // Date range filtering
     if (from || to) {
       filter.deadline = {};
       if (from) filter.deadline.$gte = from;
       if (to) filter.deadline.$lte = to;
     }
 
-    // Search functionality
+
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -66,23 +62,23 @@ router.get('/', [
       ];
     }
 
-    // Build sort object
+
     const sort = {};
     sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    // Calculate pagination
+
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    // Execute query with pagination
+
     const projects = await Project.find(filter)
       .sort(sort)
       .skip(skip)
       .limit(parseInt(limit));
 
-    // Get total count for pagination
+
     const total = await Project.countDocuments(filter);
 
-    // Calculate pagination info
+
     const totalPages = Math.ceil(total / parseInt(limit));
     const hasNextPage = parseInt(page) < totalPages;
     const hasPrevPage = parseInt(page) > 1;
@@ -117,9 +113,7 @@ router.get('/', [
   }
 });
 
-// @route   GET /api/projects/:id
-// @desc    Get a specific project by ID
-// @access  Private
+
 router.get('/:id', async (req, res) => {
   try {
     const project = await Project.findOne({
@@ -147,9 +141,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// @route   POST /api/projects
-// @desc    Create a new project
-// @access  Private
+
 router.post('/', [
   body('title')
     .notEmpty()
@@ -184,7 +176,6 @@ router.post('/', [
     .withMessage('Deadline must be in YYYY-MM-DD format')
 ], async (req, res) => {
   try {
-    // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -236,9 +227,7 @@ router.post('/', [
   }
 });
 
-// @route   PUT /api/projects/:id
-// @desc    Update a project
-// @access  Private
+
 router.put('/:id', [
   body('title')
     .optional()
@@ -282,7 +271,6 @@ router.put('/:id', [
     .withMessage('Deadline must be in YYYY-MM-DD format')
 ], async (req, res) => {
   try {
-    // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -304,7 +292,6 @@ router.put('/:id', [
       });
     }
 
-    // Update fields
     Object.keys(req.body).forEach(key => {
       if (req.body[key] !== undefined) {
         project[key] = req.body[key];
@@ -328,9 +315,7 @@ router.put('/:id', [
   }
 });
 
-// @route   DELETE /api/projects/:id
-// @desc    Delete a project
-// @access  Private
+
 router.delete('/:id', async (req, res) => {
   try {
     const project = await Project.findOneAndDelete({
@@ -359,9 +344,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// @route   GET /api/projects/status/:status
-// @desc    Get projects by status
-// @access  Private
+
 router.get('/status/:status', async (req, res) => {
   try {
     const { status } = req.params;
@@ -393,9 +376,7 @@ router.get('/status/:status', async (req, res) => {
   }
 });
 
-// @route   GET /api/projects/priority/:priority
-// @desc    Get projects by priority
-// @access  Private
+
 router.get('/priority/:priority', async (req, res) => {
   try {
     const { priority } = req.params;
@@ -427,9 +408,7 @@ router.get('/priority/:priority', async (req, res) => {
   }
 });
 
-// @route   GET /api/projects/stats/summary
-// @desc    Get project statistics summary
-// @access  Private
+
 router.get('/stats/summary', async (req, res) => {
   try {
     const stats = await Project.aggregate([
