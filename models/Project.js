@@ -61,7 +61,7 @@ const projectSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better query performance
+
 projectSchema.index({ user: 1, status: 1 });
 projectSchema.index({ user: 1, priority: 1 });
 
