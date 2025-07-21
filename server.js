@@ -9,7 +9,6 @@ dotenv.config({ path: './config.env' });
 
 const authRoutes = require('./routes/auth');
 const projectRoutes = require('./routes/projects');
-const Task = require('./models/Task');
 require('./services/scheduler');
 
 const app = express();
