@@ -9,13 +9,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendReminderEmail({ to, subject, text }) {
+async function sendReminderEmail({ to, subject, text, html }) {
   try {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to,
       subject,
       text,
+      html, // Add HTML support
     };
     await transporter.sendMail(mailOptions);
     return true;

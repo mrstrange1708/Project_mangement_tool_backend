@@ -39,10 +39,23 @@ cron.schedule('*/5 * * * *', async () => {
         console.log(`[Scheduler] Sending reminder for project: ${project.title}, deadline: ${deadlineDate}, email: ${project.userEmail}`);
         const subject = `Reminder: Project \"${project.title}\" deadline is tomorrow!`;
         const text = `Hey there! Don’t forget, your project \"${project.title}\" is due tomorrow (${deadlineDate.toLocaleDateString()}).`;
+        const html = `
+          <div style=\"font-family: Arial, sans-serif; background: #f9f9f9; padding: 24px;\">
+            <div style=\"max-width: 500px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 32px;\">
+              <h2 style=\"color: #2d7ff9; margin-bottom: 16px;\">⏰ Project Deadline Reminder</h2>
+              <p style=\"font-size: 16px; color: #333;\">Hey there! 👋</p>
+              <p style=\"font-size: 16px; color: #333;\">
+                This is a friendly reminder that your project <b style=\"color: #2d7ff9;\">\"${project.title}\"</b> is due <b>tomorrow</b> (<b>${deadlineDate.toLocaleDateString()}</b>).
+              </p>
+              <p style=\"font-size: 15px; color: #666; margin-top: 32px;\">Stay productive!<br/>— TaskFlow Team</p>
+            </div>
+          </div>
+        `;
         const sent = await sendReminderEmail({
           to: project.userEmail,
           subject,
           text,
+          html,
         });
         if (sent) {
           console.log(`[Scheduler] Email sent successfully to ${project.userEmail}`);
