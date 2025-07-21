@@ -56,7 +56,9 @@ const projectSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
+  },
+  userEmail: { type: String },
+  reminderSent: { type: Boolean, default: false },
 }, {
   timestamps: true
 });

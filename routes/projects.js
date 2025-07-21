@@ -173,7 +173,10 @@ router.post('/', [
     .withMessage('End time is required'),
   body('deadline')
     .matches(/^\d{4}-\d{2}-\d{2}$/)
-    .withMessage('Deadline must be in YYYY-MM-DD format')
+    .withMessage('Deadline must be in YYYY-MM-DD format'),
+  body('userEmail')
+    .isEmail()
+    .withMessage('A valid user email is required')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -194,7 +197,8 @@ router.post('/', [
       starttime,
       end,
       endtime,
-      deadline
+      deadline,
+      userEmail
     } = req.body;
 
     const project = new Project({
@@ -207,7 +211,9 @@ router.post('/', [
       end,
       endtime,
       deadline,
-      user: req.user._id
+      user: req.user._id,
+      userEmail,
+      reminderSent: false
     });
 
     await project.save();

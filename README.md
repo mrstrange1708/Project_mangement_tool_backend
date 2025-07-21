@@ -1,4 +1,4 @@
-# TaskLoad - Project Management System
+# TaskFlow- Project Management System
 
 A full-stack project management system built with Node.js, Express, MongoDB, and JWT authentication.
 
@@ -50,20 +50,11 @@ A full-stack project management system built with Node.js, Express, MongoDB, and
    npm install
    ```
 
-3. **Environment Setup**
-   - Copy `config.env` and update the values:
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/taskload
-   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-   PORT=5000
-   NODE_ENV=development
-   ```
-
-4. **Start MongoDB**
+3. **Start MongoDB**
    - Local MongoDB: `mongod`
    - Or use MongoDB Atlas (cloud)
 
-5. **Run the application**
+4. **Run the application**
    ```bash
    # Development mode
    npm run dev
