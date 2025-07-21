@@ -26,6 +26,9 @@ cron.schedule('*/5 * * * *', async () => {
       let deadlineDate = project.deadline;
       if (typeof deadlineDate === 'string') {
         deadlineDate = new Date(deadlineDate);
+        console.log(`[Scheduler] Parsed string deadline for project '${project.title}':`, deadlineDate);
+      } else {
+        console.log(`[Scheduler] Deadline for project '${project.title}':`, deadlineDate);
       }
       if (
         deadlineDate instanceof Date &&
@@ -34,8 +37,8 @@ cron.schedule('*/5 * * * *', async () => {
         deadlineDate < dayAfter
       ) {
         console.log(`[Scheduler] Sending reminder for project: ${project.title}, deadline: ${deadlineDate}, email: ${project.userEmail}`);
-        const subject = `Reminder: Project "${project.title}" deadline is tomorrow!`;
-        const text = `Hey there! Don’t forget, your project "${project.title}" is due tomorrow (${deadlineDate.toLocaleDateString()}).`;
+        const subject = `Reminder: Project \"${project.title}\" deadline is tomorrow!`;
+        const text = `Hey there! Don’t forget, your project \"${project.title}\" is due tomorrow (${deadlineDate.toLocaleDateString()}).`;
         const sent = await sendReminderEmail({
           to: project.userEmail,
           subject,
@@ -48,6 +51,8 @@ cron.schedule('*/5 * * * *', async () => {
         } else {
           console.log(`[Scheduler] Failed to send email to ${project.userEmail}`);
         }
+      } else {
+        console.log(`[Scheduler] Project '${project.title}' deadline (${deadlineDate}) does not match tomorrow's window (${tomorrow} - ${dayAfter})`);
       }
     }
   } catch (err) {
